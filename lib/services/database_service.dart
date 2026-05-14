@@ -51,6 +51,25 @@ class DatabaseService {
     await box.add(booking);
   }
 
+  Future<void> cancelBooking(String bookingId) async {
+    final box = getBox<Booking>(bookingsBoxName);
+    final entries = box.toMap();
+    for (final entry in entries.entries) {
+      if (entry.value.id == bookingId) {
+        final cancelled = Booking(
+          id: entry.value.id,
+          serviceId: entry.value.serviceId,
+          serviceName: entry.value.serviceName,
+          dateTime: entry.value.dateTime,
+          status: 'cancelled',
+          totalPrice: entry.value.totalPrice,
+        );
+        await box.put(entry.key, cancelled);
+        return;
+      }
+    }
+  }
+
   // Service methods
   List<Service> getServices() {
     final box = getBox<Service>(servicesBoxName);

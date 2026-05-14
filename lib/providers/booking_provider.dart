@@ -47,4 +47,20 @@ class BookingProvider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> cancelBooking(String bookingId) async {
+    await _db.cancelBooking(bookingId);
+    final idx = _bookings.indexWhere((b) => b.id == bookingId);
+    if (idx != -1) {
+      _bookings[idx] = Booking(
+        id: _bookings[idx].id,
+        serviceId: _bookings[idx].serviceId,
+        serviceName: _bookings[idx].serviceName,
+        dateTime: _bookings[idx].dateTime,
+        status: 'cancelled',
+        totalPrice: _bookings[idx].totalPrice,
+      );
+      notifyListeners();
+    }
+  }
 }
